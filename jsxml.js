@@ -203,6 +203,38 @@
         return r;
     }
 
+    function _createActiveXObject(progIDs) {
+        var i;
+        for (i = 0; i < progIDs.length; i++) {
+            try {
+                return new ActiveXObject(progIDs[i]);
+            } catch (e) {}
+        }
+        return null;
+    }
+
+    function _createDomDoc() {
+        return _createActiveXObject([
+            "Msxml2.FreeThreadedDOMDocument.6.0",
+            "Msxml2.FreeThreadedDOMDocument.3.0",
+            "Msxml2.FreeThreadedDOMDocument",
+            "Microsoft.XMLDOM",
+            "Msxml2.DOMDocument.6.0",
+            "Msxml2.DOMDocument.5.0",
+            "Msxml2.DOMDocument.4.0",
+            "Msxml2.DOMDocument.3.0",
+            "MSXML2.DOMDocument",
+            "MSXML.DOMDocument"
+        ]);
+    }
+
+    function _createXSLTemplate() {
+        return _createActiveXObject([
+            'Msxml2.XSLTemplate.6.0',
+            'Msxml2.XSLTemplate'
+        ]);
+    }
+
     //endregion
 
 
@@ -360,31 +392,12 @@
                 return res;
             }
 
-            function _createActiveXObject() {
-                var progIDs = [
-                    "Msxml2.FreeThreadedDOMDocument.3.0",
-                    "Msxml2.FreeThreadedDOMDocument",
-                    "Microsoft.XMLDOM",
-                    "Msxml2.DOMDocument.6.0",
-                    "Msxml2.DOMDocument.5.0",
-                    "Msxml2.DOMDocument.4.0",
-                    "Msxml2.DOMDocument.3.0",
-                    "MSXML2.DOMDocument",
-                    "MSXML.DOMDocument"
-                ];
-                for (var i = 0; i < progIDs.length; i++) {
-                    try {
-                        return new ActiveXObject(progIDs[i]);
-                    } catch (e) {}
-                }
-                return null;
-            }
 
             var d = null;
             // create IE xml DOM without ActiveX, submitted by alfalabs.net@gmail.com
             try {
                 if (typeof(ActiveXObject) !== 'undefined' || ActiveXObject instanceof Object) {
-                    d = _createActiveXObject();
+                    d = _createDomDoc();
                     if (d) {
                         d.async = false;
                         d.preserveWhiteSpace = true;
@@ -724,8 +737,8 @@
                 } else
                 // 3. Use function transform on the XsltProcessor used for IE9 (which doesn't support [transformNode] any more)
                 if (typeof(ActiveXObject) !== 'undefined' || ActiveXObject instanceof Object) {
-                    var xslt = new ActiveXObject("Msxml2.XSLTemplate");
-                    var xslDoc = new ActiveXObject("Msxml2.FreeThreadedDOMDocument");
+                    var xslt = _createXSLTemplate();
+                    var xslDoc = _createDomDoc();
                     xslDoc.loadXML(_xslSrc);
                     xslt.stylesheet = xslDoc;
                     var xslProc = xslt.createProcessor();
