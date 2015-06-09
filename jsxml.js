@@ -702,10 +702,10 @@
          * @member JSXML
          */
         transReady: function (xmlSrc, xslSrc, nativeResult, doc) {
+            var _xslSrc = typeof xslSrc === 'string' ? xslSrc : this.stringify(xslSrc);
             var r;
             xmlSrc = this.fromStringOrObject(xmlSrc);
             xslSrc = this.fromStringOrObject(xslSrc);
-            var _xslSrc = typeof xslSrc === 'string' ? xslSrc : this.stringify(xslSrc);
             if (!xmlSrc || !xslSrc) { return false; }
 
             try {
